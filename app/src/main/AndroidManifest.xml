@@ -50,7 +50,11 @@
         <activity
             android:name=".DetailMenuActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ListResepActivity"></activity>
+        <activity
+            android:name=".ListResepActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".TambahResepActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

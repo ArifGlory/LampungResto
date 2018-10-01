@@ -130,6 +130,8 @@ public class BerandaRestoActivity extends AppCompatActivity
             startActivity(i);
         } else if (id == R.id.nav_resepResto) {
 
+            i = new Intent(getApplicationContext(),ListResepActivity.class);
+            startActivity(i);
         }else if (id == R.id.nav_pesanan) {
 
         }else if (id == R.id.nav_profilResto) {
