@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -24,8 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import irwan.lampungresto.DetailMenuActivity;
+import irwan.lampungresto.DetailResepActivity;
 import irwan.lampungresto.FragmentHomeResto;
 import irwan.lampungresto.Kelas.SharedVariable;
+import irwan.lampungresto.ListResepActivity;
 import irwan.lampungresto.R;
 
 
@@ -42,6 +45,7 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
     public static List<String> list_deskripsi = new ArrayList();
     public static List<String> list_key = new ArrayList();
     public static List<String> list_downloadURL = new ArrayList();
+    public static List<String> list_detailResep = new ArrayList();
     String key = "";
     Firebase Vref,refLagi;
     Bitmap bitmap;
@@ -60,7 +64,7 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
         Firebase.setAndroidContext(this.context);
         FirebaseApp.initializeApp(context.getApplicationContext());
         ref = FirebaseDatabase.getInstance().getReference();
-        /*
+
         ref.child("resto").child(SharedVariable.userID).child("resepList").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -69,20 +73,23 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
                 list_deskripsi.clear();
                 list_nama.clear();
                 list_key.clear();
+                list_detailResep.clear();
 
-                FragmentHomeResto.progressBar.setVisibility(View.VISIBLE);
+                ListResepActivity.progressBar.setVisibility(View.VISIBLE);
                 for (DataSnapshot child : dataSnapshot.getChildren()){
                     String key = child.getKey();
                     String namaMenu = child.child("namaResep").getValue().toString();
                     String deskripsi = child.child("deskripsi").getValue().toString();
                     String downloadURL = child.child("downloadUrl").getValue().toString();
+                    String detail = child.child("detailResep").getValue().toString();
 
                     list_key.add(key);
                     list_nama.add(namaMenu);
                     list_deskripsi.add(deskripsi);
                     list_downloadURL.add(downloadURL);
+                    list_detailResep.add(detail);
                 }
-                FragmentHomeResto.progressBar.setVisibility(View.GONE);
+                ListResepActivity.progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -90,7 +97,7 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
 
             }
         });
-        */
+
 
     }
 
@@ -109,17 +116,15 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
 
         Resources res = context.getResources();
 
-      // holder.txtNamaMotor.setText(nama[position].toString());
-        //holder.txtPlatNomor.setText(plat[position].toString());
-        //holder.contentWithBackground.setGravity(Gravity.LEFT);
-       holder.txtNamaResep.setText("REsep 1");
-       holder.txtDeskripsi.setText("Resep membuat ikan bakar");
+
+       holder.txtNamaResep.setText(list_nama.get(position).toString());
+       holder.txtDeskripsi.setText(list_deskripsi.get(position).toString());
         //pake library glide buat load gambar dari URL
-        /*
+
         Glide.with(context.getApplicationContext())
                 .load(list_downloadURL.get(position).toString())
                 .asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.img_iconlistMotor);*/
+                .into(holder.imgRecipe);
 
 
         holder.txtDeskripsi.setOnClickListener(clicklistener);
@@ -141,16 +146,17 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
         @Override
         public void onClick(View v) {
 
-            RecycleViewHolderListMenu vHolder = (RecycleViewHolderListMenu) v.getTag();
-           // int position = vHolder.getPosition();
-           // Toast.makeText(context.getApplicationContext(), "Item diklik", Toast.LENGTH_SHORT).show();
-            /*
-            i = new Intent(context.getApplicationContext(), DetailMenuActivity.class);
+            RecycleViewHolderListResep vHolder = (RecycleViewHolderListResep) v.getTag();
+            int position = vHolder.getPosition();
+          //  Toast.makeText(context.getApplicationContext(), "Item diklik", Toast.LENGTH_SHORT).show();
+
+            i = new Intent(context.getApplicationContext(), DetailResepActivity.class);
             i.putExtra("nama",list_nama.get(position).toString());
-            i.putExtra("harga",list_harga.get(position).toString());
+            i.putExtra("deskripsi",list_deskripsi.get(position).toString());
             i.putExtra("url",list_downloadURL.get(position).toString());
             i.putExtra("key",list_key.get(position).toString());
-            context.startActivity(i);*/
+            i.putExtra("detail",list_detailResep.get(position).toString());
+            context.startActivity(i);
 
         }
     };
@@ -159,8 +165,8 @@ public class RecycleAdapterListResep extends RecyclerView.Adapter<RecycleViewHol
 
     public int getItemCount() {
 
-      // return list_nama == null ? 0 : list_nama.size();
-       return nama.length;
+       return list_nama == null ? 0 : list_nama.size();
+     //  return nama.length;
 
     }
 

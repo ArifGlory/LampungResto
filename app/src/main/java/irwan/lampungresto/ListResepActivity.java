@@ -36,6 +36,7 @@ public class ListResepActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         recycler_listResep= (RecyclerView) findViewById(R.id.recycler_listlevel);
         adapter = new RecycleAdapterListResep(this);

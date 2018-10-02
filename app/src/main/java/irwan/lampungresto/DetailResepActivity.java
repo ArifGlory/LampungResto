@@ -47,13 +47,12 @@ import com.google.firebase.storage.UploadTask;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import irwan.lampungresto.Kelas.FoodMenu;
 import irwan.lampungresto.Kelas.SharedVariable;
 
-public class DetailMenuActivity extends AppCompatActivity {
+public class DetailResepActivity extends AppCompatActivity {
 
     ImageView imgBrowse;
-    EditText etNama,etHarga;
+    EditText etNama,etDeskripsi,etResepnya;
     Button btnUpload;
     public static ProgressBar progressBar;
     DatabaseReference ref;
@@ -65,7 +64,7 @@ public class DetailMenuActivity extends AppCompatActivity {
     FirebaseUser fbUser;
     Uri uri;
     private Boolean isFabOpen = false;
-    private String namaMenu,hargaMenu,downloadURL,keyMenu;
+    private String namaResep,deskripsiResep,detailResep,downloadURL,keyResep;
     Intent i;
     DialogInterface.OnClickListener listener;
 
@@ -75,32 +74,36 @@ public class DetailMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_menu);
+        setContentView(R.layout.activity_detail_resep);
+
 
         Firebase.setAndroidContext(this);
-        FirebaseApp.initializeApp(DetailMenuActivity.this);
+        FirebaseApp.initializeApp(DetailResepActivity.this);
         fbUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fbUser == null) {
             finish();
         }
 
         i = getIntent();
-        namaMenu = i.getStringExtra("nama");
-        hargaMenu = i.getStringExtra("harga");
+        namaResep = i.getStringExtra("nama");
+        deskripsiResep = i.getStringExtra("deskripsi");
         downloadURL = i.getStringExtra("url");
-        keyMenu = i.getStringExtra("key");
+        keyResep = i.getStringExtra("key");
+        detailResep = i.getStringExtra("detail");
 
         ref = FirebaseDatabase.getInstance().getReference();
 
         imgBrowse = (ImageView) findViewById(R.id.img_browse);
         etNama = (EditText) findViewById(R.id.userEmailId);
-        etHarga = (EditText) findViewById(R.id.etHargaSayur);
+        etDeskripsi = (EditText) findViewById(R.id.etHargaSayur);
         btnUpload = (Button) findViewById(R.id.signUpBtn);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        etResepnya = (EditText) findViewById(R.id.etResepnya);
 
-        etHarga.setEnabled(false);
+        etDeskripsi.setEnabled(false);
         etNama.setEnabled(false);
         btnUpload.setEnabled(false);
+        etResepnya.setEnabled(false);
 
         fabDelete = (FloatingActionButton) findViewById(R.id.fabDelete);
         fabEdit = (FloatingActionButton) findViewById(R.id.fabEdit);
@@ -115,7 +118,8 @@ public class DetailMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 etNama.setEnabled(true);
-                etHarga.setEnabled(true);
+                etDeskripsi.setEnabled(true);
+                etResepnya.setEnabled(true);
                 btnUpload.setText("Ubah");
                 btnUpload.setEnabled(true);
                 imgBrowse.setEnabled(true);
@@ -128,8 +132,9 @@ public class DetailMenuActivity extends AppCompatActivity {
         rotate_forward = AnimationUtils.loadAnimation(this,R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(this,R.anim.rotate_backward);
 
-        etNama.setText(namaMenu);
-        etHarga.setText(hargaMenu);
+        etNama.setText(namaResep);
+        etDeskripsi.setText(deskripsiResep);
+        etResepnya.setText(detailResep);
         Glide.with(getApplicationContext())
                 .load(downloadURL)
                 .asBitmap().fitCenter().diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -145,7 +150,7 @@ public class DetailMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(DetailMenuActivity.this, new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE}, RC_PERMISSION_READ_EXTERNAL_STORAGE);
+                    ActivityCompat.requestPermissions(DetailResepActivity.this, new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE}, RC_PERMISSION_READ_EXTERNAL_STORAGE);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
@@ -157,8 +162,8 @@ public class DetailMenuActivity extends AppCompatActivity {
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(DetailMenuActivity.this);
-                builder.setMessage("Anda yakin ingin menghapus menu ini ?");
+                AlertDialog.Builder builder = new AlertDialog.Builder(DetailResepActivity.this);
+                builder.setMessage("Anda yakin ingin menghapus resep ini ?");
                 builder.setCancelable(false);
 
                 listener = new DialogInterface.OnClickListener()
@@ -167,8 +172,8 @@ public class DetailMenuActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(which == DialogInterface.BUTTON_POSITIVE){
-                            ref.child("resto").child(SharedVariable.userID).child("menuList").child(keyMenu).setValue(null);
-                            i = new Intent(getApplicationContext(),BerandaRestoActivity.class);
+                            ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).setValue(null);
+                            i = new Intent(getApplicationContext(),ListResepActivity.class);
                             startActivity(i);
                         }
 
@@ -182,16 +187,6 @@ public class DetailMenuActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (uri != null || !namaMenu.equals(etNama.getText().toString()) || !hargaMenu.equals(etHarga.getText().toString()) ){
-            i = new Intent(getApplicationContext(),BerandaRestoActivity.class);
-            startActivity(i);
-        }
-        super.onBackPressed();
     }
 
     public void animateFB(){
@@ -219,9 +214,20 @@ public class DetailMenuActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (uri != null || !namaResep.equals(etNama.getText().toString()) || !deskripsiResep.equals(etDeskripsi.getText().toString())
+                || !detailResep.equals(etResepnya.getText().toString())  ){
+            i = new Intent(getApplicationContext(),ListResepActivity.class);
+            startActivity(i);
+        }
+        super.onBackPressed();
+    }
+
     private void matikanKomponen(){
         progressBar.setVisibility(View.VISIBLE);
-        etHarga.setEnabled(false);
+        etDeskripsi.setEnabled(false);
+        etResepnya.setEnabled(false);
         etNama.setEnabled(false);
         imgBrowse.setEnabled(false);
         fabSetting.setEnabled(false);
@@ -231,7 +237,8 @@ public class DetailMenuActivity extends AppCompatActivity {
 
     private void hidupkanKomponen(){
         progressBar.setVisibility(View.GONE);
-        etHarga.setEnabled(true);
+        etResepnya.setEnabled(true);
+        etDeskripsi.setEnabled(true);
         etNama.setEnabled(true);
         imgBrowse.setEnabled(true);
         fabSetting.setEnabled(true);
@@ -241,37 +248,24 @@ public class DetailMenuActivity extends AppCompatActivity {
 
     private void checkValidation(){
         String getNama = etNama.getText().toString();
-        String getHarga = etHarga.getText().toString();
-       // matikanKomponen();
+        String getDeskripsi = etDeskripsi.getText().toString();
+        String getDetail = etResepnya.getText().toString();
+        // matikanKomponen();
 
         if (getNama.equals("") || getNama.length() == 0
-                || getHarga.equals("") || getHarga.length() == 0) {
+                || getDeskripsi.equals("") || getDeskripsi.length() == 0
+                || getDetail.equals("") || getDetail.length() == 0) {
 
-            customToast("Harga dan Nama menu harus diisi");
+            customToast("Semua Field harus diisi");
             hidupkanKomponen();
         }else if (uri == null){
-           //ke proses untuk update tapi tanpa ganti URl Gambar
-            updateWithoutChangeURI(etNama.getText().toString(),etHarga.getText().toString());
+            //ke proses untuk update tapi tanpa ganti URl Gambar
+            updateWithoutChangeURI(etNama.getText().toString(),etDeskripsi.getText().toString(),etResepnya.getText().toString());
         }else {
 
             uploadGambar(uri);
 
         }
-    }
-
-    private void updateWithoutChangeURI(String nama,String harga){
-        progressBar.setVisibility(View.VISIBLE);
-        ref.child("resto").child(SharedVariable.userID).child("menuList").child(keyMenu).child("namaMenu").setValue(nama);
-        ref.child("resto").child(SharedVariable.userID).child("menuList").child(keyMenu).child("harga").setValue(harga);
-
-        customToast("Berhasil Diubah");
-        progressBar.setVisibility(View.GONE);
-        etHarga.setText(harga);
-        etNama.setText(nama);
-
-        etNama.setEnabled(false);
-        etHarga.setEnabled(false);
-        btnUpload.setEnabled(false);
     }
 
     private void uploadGambar(final Uri uri){
@@ -289,7 +283,7 @@ public class DetailMenuActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
-                Toast.makeText(DetailMenuActivity.this, "Upload failed!\n" + exception.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(DetailResepActivity.this, "Upload failed!\n" + exception.getMessage(), Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.GONE);
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -297,29 +291,53 @@ public class DetailMenuActivity extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                Toast.makeText(DetailMenuActivity.this, "Upload finished!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailResepActivity.this, "Upload finished!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
                 // save image to database
 
                 String nm = etNama.getText().toString();
-                String harga = etHarga.getText().toString();
+                String desk = etDeskripsi.getText().toString();
+                String detail = etResepnya.getText().toString();
 
-                ref.child("resto").child(SharedVariable.userID).child("menuList").child(keyMenu).child("namaMenu").setValue(etNama.getText().toString());
-                ref.child("resto").child(SharedVariable.userID).child("menuList").child(keyMenu).child("harga").setValue(etHarga.getText().toString());
-                ref.child("resto").child(SharedVariable.userID).child("menuList").child(keyMenu).child("downloadUrl").setValue(downloadUrl.toString());
+                ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("namaResep").setValue(etNama.getText().toString());
+                ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("deskripsi").setValue(etDeskripsi.getText().toString());
+                ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("downloadUrl").setValue(downloadUrl.toString());
+                ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("detailResep").setValue(etResepnya.getText().toString());
 
                 customToast("Berhasil Diubah");
                 progressBar.setVisibility(View.GONE);
-                etHarga.setText(harga);
+                etDeskripsi.setText(desk);
+                etResepnya.setText(detail);
                 etNama.setText(nm);
 
                 etNama.setEnabled(false);
-                etHarga.setEnabled(false);
+                etDeskripsi.setEnabled(false);
+                etResepnya.setEnabled(false);
                 btnUpload.setEnabled(false);
                 btnUpload.setText("......");
             }
         });
     }
+
+    private void updateWithoutChangeURI(String nama,String deskripsiRes,String detailRes){
+        progressBar.setVisibility(View.VISIBLE);
+        ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("namaResep").setValue(nama);
+        ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("deskripsi").setValue(deskripsiRes);
+        ref.child("resto").child(SharedVariable.userID).child("resepList").child(keyResep).child("detailResep").setValue(detailRes);
+
+        customToast("Berhasil Diubah");
+        progressBar.setVisibility(View.GONE);
+        etDeskripsi.setText(deskripsiRes);
+        etResepnya.setText(detailRes);
+        etNama.setText(nama);
+
+        etNama.setEnabled(false);
+        etDeskripsi.setEnabled(false);
+        etResepnya.setEnabled(false);
+        btnUpload.setEnabled(false);
+        btnUpload.setText("......");
+    }
+
 
     public static String GetMimeType(Context context, Uri uriImage)
     {
@@ -351,7 +369,7 @@ public class DetailMenuActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_IMAGE_GALLERY && resultCode == RESULT_OK) {
             uri = data.getData();
-            final String tipe = GetMimeType(DetailMenuActivity.this,uri);
+            final String tipe = GetMimeType(DetailResepActivity.this,uri);
             //Toast.makeText(TambahMenuActivity.this, "Tipe : !\n" + tipe, Toast.LENGTH_LONG).show();
 
             imgBrowse.setImageURI(uri);
@@ -371,6 +389,4 @@ public class DetailMenuActivity extends AppCompatActivity {
         toast.setView(layout); // Set Custom View over toast
         toast.show();// Finally show toast
     }
-
-
 }

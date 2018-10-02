@@ -215,7 +215,7 @@ public class TambahMenuActivity extends AppCompatActivity {
                 Toast.makeText(TambahMenuActivity.this, "Upload finished!", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
                 // save image to database
-                String key = ref.child("psayur").child(SharedVariable.userID).child("menuList").push().getKey();
+                String key = ref.child("resto").child(SharedVariable.userID).child("menuList").push().getKey();
                 FoodMenu foodMenu = new FoodMenu(etNama.getText().toString(),
                         etHarga.getText().toString(),
                         key,
