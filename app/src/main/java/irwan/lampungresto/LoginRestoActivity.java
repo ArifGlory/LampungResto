@@ -82,20 +82,11 @@ public class LoginRestoActivity extends AppCompatActivity {
         keLoginPembeli = (TextView) findViewById(R.id.keLoginPembeli);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        daftarPenjual = (TextView) findViewById(R.id.daftarPenjual);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkValidation();
-            }
-        });
-        daftarPenjual.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // buat pindah ke register activiti
-                i = new Intent(getApplicationContext(),RegisterRestoActivity.class);
-                startActivity(i);
             }
         });
         keLoginPembeli.setOnClickListener(new View.OnClickListener() {

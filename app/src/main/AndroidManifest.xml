@@ -56,7 +56,15 @@
         <activity
             android:name=".TambahResepActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".DetailResepActivity"
+        <activity
+            android:name=".DetailResepActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ProfilRestoActivity" />
+        <activity
+            android:name=".ListPesananActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".DetailPesananActivity"
+            android:label="Detail Pesanan"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

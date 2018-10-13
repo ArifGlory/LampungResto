@@ -315,6 +315,7 @@ public class DetailResepActivity extends AppCompatActivity {
                 etResepnya.setEnabled(false);
                 btnUpload.setEnabled(false);
                 btnUpload.setText("......");
+                imgBrowse.setEnabled(false);
             }
         });
     }
@@ -336,6 +337,7 @@ public class DetailResepActivity extends AppCompatActivity {
         etResepnya.setEnabled(false);
         btnUpload.setEnabled(false);
         btnUpload.setText("......");
+        imgBrowse.setEnabled(false);
     }
 
 

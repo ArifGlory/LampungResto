@@ -23,15 +23,6 @@
                 android:layout_gravity="center_horizontal" />
 
             <TextView
-                android:id="@+id/txtnama"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Login Resto"
-                android:textColor="@color/white_greyish"
-                android:textSize="16dip" />
-
-            <TextView
                 android:id="@+id/txtSLogan"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -101,16 +92,6 @@
                 android:textColor="#009688"
                 android:textSize="17sp"
                 android:textStyle="bold" />
-
-
-            <TextView android:id="@+id/daftarPenjual"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:text=" Belum ada akun Resto ? Yuk Daftar"
-                android:gravity="center"
-                android:textColor="@color/white_greyish"
-                android:textSize="16dip"/>
 
 
             <TextView android:id="@+id/keLoginPembeli"
